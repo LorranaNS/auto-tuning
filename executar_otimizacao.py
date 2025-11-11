@@ -8,6 +8,7 @@ from otimizador import HybridOptimizer
 from config_manager import ConfigManager
 import sys
 import time
+import os
 
 def main():
     # Permite passar arquivo de configuração como argumento
@@ -57,13 +58,8 @@ def main():
     optimizer = HybridOptimizer(config_file)
     
     # Executa as fases configuradas
-    fase_inicio = time.time()
     optimizer.explore_edges()
-    
-    fase_inicio = time.time()
     optimizer.pso_optimize()
-    
-    fase_inicio = time.time()
     optimizer.local_search()
     
     # Gera relatório final
@@ -81,9 +77,7 @@ def main():
     print(f"Tempo total: {tempo_total/60:.2f} minutos")
     print(f"Tentativas: {optimizer.attempts}")
     print(f"Melhor valor: {optimizer.best_value:.6f}")
-    print(f"\n📄 Relatórios salvos:")
-    print(f"  ✓ relatorio_otimizacao.txt")
-    print(f"  ✓ historico_otimizacao.json")
+    print(f"\n📁 Pasta de resultados: {optimizer.resultado_dir}/")
     print("═" * 60)
 
 if __name__ == "__main__":

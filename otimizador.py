@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import numpy as np
 from config_manager import ConfigManager
+import os
 
 class HybridOptimizer:
     def __init__(self, config_path="config.json"):
@@ -16,6 +17,24 @@ class HybridOptimizer:
         self.attempts = 0
         self.start_time = time.time()
         self.history = []
+        
+        # Cria pasta de resultados com data/hora
+        self.resultado_dir = self._criar_pasta_resultado()
+        
+    def _criar_pasta_resultado(self):
+        """Cria pasta para salvar resultados da execução"""
+        # Cria pasta base 'resultados' se não existir
+        base_dir = 'resultados'
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        
+        # Cria subpasta com data/hora (formato: tentativa_21-01-2025_1930)
+        timestamp = datetime.now().strftime('tentativa_%d-%m-%Y_%H%M')
+        resultado_dir = os.path.join(base_dir, timestamp)
+        os.makedirs(resultado_dir, exist_ok=True)
+        
+        print(f"📁 Resultados serão salvos em: {resultado_dir}\n")
+        return resultado_dir
         
     def evaluate(self, *params):
         """Avalia uma configuração de parâmetros"""
@@ -218,6 +237,8 @@ class HybridOptimizer:
                     RELATÓRIO DE OTIMIZAÇÃO
 ═══════════════════════════════════════════════════════════════
 
+PASTA DE RESULTADOS: {self.resultado_dir}
+
 CONFIGURAÇÃO:
 -------------
 Arquivo de configuração: {self.config_manager.config_path}
@@ -255,10 +276,33 @@ Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
         
         print(report)
         
-        with open('relatorio_otimizacao.txt', 'w', encoding='utf-8') as f:
+        # Salva arquivos na pasta de resultados
+        relatorio_path = os.path.join(self.resultado_dir, 'relatorio_otimizacao.txt')
+        historico_path = os.path.join(self.resultado_dir, 'historico_otimizacao.json')
+        config_path = os.path.join(self.resultado_dir, 'config_utilizada.json')
+        
+        with open(relatorio_path, 'w', encoding='utf-8') as f:
             f.write(report)
         
-        with open('historico_otimizacao.json', 'w') as f:
+        with open(historico_path, 'w', encoding='utf-8') as f:
             json.dump(self.history, f, indent=2)
+        
+        # Salva cópia da configuração utilizada
+        with open(config_path, 'w', encoding='utf-8') as f:
+            json.dump(self.config_manager.config, f, indent=2, ensure_ascii=False)
+        
+        # Cria arquivo resumo com melhor resultado
+        resumo_path = os.path.join(self.resultado_dir, 'resumo.txt')
+        with open(resumo_path, 'w', encoding='utf-8') as f:
+            f.write(f"MELHOR VALOR: {self.best_value:.6f}\n")
+            f.write(f"TENTATIVAS: {self.attempts}\n")
+            f.write(f"TEMPO: {elapsed_time/60:.2f} min\n")
+            f.write(f"COMANDO: {self.exe_path} {' '.join(str(p) for p in self.best_params)}\n")
+        
+        print(f"\n📄 Arquivos salvos em: {self.resultado_dir}/")
+        print(f"  ✓ relatorio_otimizacao.txt")
+        print(f"  ✓ historico_otimizacao.json")
+        print(f"  ✓ config_utilizada.json")
+        print(f"  ✓ resumo.txt")
         
         return report
