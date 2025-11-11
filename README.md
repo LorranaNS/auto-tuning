@@ -32,6 +32,53 @@ Encontrar o **maior valor** possível de um programa (`modelo10.exe`) que simula
 - Testa variações pequenas em cada parâmetro
 - Garante que chegamos no melhor local possível
 
+## 🧪 Como Testar
+
+### 1. Verificar se o modelo funciona
+
+```bash
+python verificar_modelo.py
+```
+
+Este script:
+
+- ✓ Verifica se modelo10.exe existe
+- ✓ Testa 3 configurações diferentes
+- ✓ Valida as saídas do modelo
+
+### 2. Teste rápido (30 segundos)
+
+```bash
+python teste_rapido.py
+```
+
+Executa otimização reduzida para verificar se tudo está funcionando.
+
+### 3. Teste manual do modelo
+
+```bash
+./modelo10.exe baixo 50 50 50 50 50 50 50 50 50
+```
+
+Testa diretamente o executável.
+
+### 4. Execução completa
+
+```bash
+python executar_otimizacao.py
+```
+
+Executa a otimização completa de 1 hora.
+
+## 📋 Checklist Antes de Executar
+
+- [ ] `modelo10.exe` está no diretório
+- [ ] `modelo10.exe` tem permissão de execução
+- [ ] `config.json` está configurado corretamente
+- [ ] Testou com `verificar_modelo.py`
+- [ ] Testou com `teste_rapido.py`
+- [ ] Está pronto para a execução completa
+
 ## 🚀 Como Executar
 
 ### Requisitos
