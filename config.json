@@ -1,0 +1,109 @@
+{
+  "modelo": {
+    "executavel": "./modelo10.exe",
+    "timeout": 10
+  },
+  "parametros": [
+    {
+      "nome": "x1",
+      "tipo": "categorico",
+      "opcoes": ["baixo", "medio", "alto"],
+      "descricao": "Parâmetro categórico"
+    },
+    {
+      "nome": "x2",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 2"
+    },
+    {
+      "nome": "x3",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 3"
+    },
+    {
+      "nome": "x4",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 4"
+    },
+    {
+      "nome": "x5",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 5"
+    },
+    {
+      "nome": "x6",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 6"
+    },
+    {
+      "nome": "x7",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 7"
+    },
+    {
+      "nome": "x8",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 8"
+    },
+    {
+      "nome": "x9",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 9"
+    },
+    {
+      "nome": "x10",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 10"
+    }
+  ],
+  "otimizacao": {
+    "fases": {
+      "exploracao_bordas": {
+        "ativo": true,
+        "tempo_max": 300,
+        "configuracoes_teste": [
+          [100, 100],
+          [1, 1],
+          [100, 1],
+          [1, 100],
+          [50, 50],
+          [75, 75],
+          [25, 25]
+        ]
+      },
+      "pso": {
+        "ativo": true,
+        "tempo_max": 3000,
+        "num_particulas": 30,
+        "inercia": 0.7,
+        "c1": 1.5,
+        "c2": 1.5,
+        "probabilidade_mutacao": 0.15
+      },
+      "busca_local": {
+        "ativo": true,
+        "tempo_max": 300,
+        "deltas": [-10, -5, -3, -2, -1, 0, 1, 2, 3, 5, 10]
+      }
+    },
+    "tempo_total_max": 3600
+  }
+}

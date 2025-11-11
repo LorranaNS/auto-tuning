@@ -1,0 +1,57 @@
+
+═══════════════════════════════════════════════════════════════
+                    RELATÓRIO DE OTIMIZAÇÃO
+═══════════════════════════════════════════════════════════════
+
+ESTRATÉGIA UTILIZADA:
+--------------------
+Abordagem Híbrida combinando três técnicas:
+
+1. EXPLORAÇÃO DE BORDAS (5 min):
+   - Teste sistemático de valores extremos (0, 1, 50, 100)
+   - Combinações de parâmetros nas bordas do espaço de busca
+   - Testes com todas as opções de x1 (baixo, médio, alto)
+
+2. PARTICLE SWARM OPTIMIZATION - PSO (20 min):
+   - 20 partículas explorando o espaço simultaneamente
+   - Balanceamento entre exploração global e local
+   - Atualização dinâmica baseada em melhores resultados
+   - Parâmetros: inércia=0.7, c1=1.5, c2=1.5
+
+3. BUSCA LOCAL REFINADA (5 min):
+   - Exploração intensiva ao redor do melhor resultado
+   - Variações incrementais em cada parâmetro
+   - Teste de todas as opções de x1
+
+JUSTIFICATIVA:
+-------------
+- PSO é eficiente para espaços de alta dimensionalidade (9 dims)
+- Exploração de bordas captura máximos/mínimos frequentes
+- Busca local refina o resultado encontrado
+- Abordagem otimizada para 30 minutos de execução
+
+RESULTADOS:
+-----------
+Tempo de execução: 26.83 minutos (1609.7 segundos)
+Número de tentativas: 966
+Taxa de avaliação: 0.60 tentativas/segundo
+
+MELHOR RESULTADO ENCONTRADO:
+-----------------------------
+Valor: 1036.940000
+
+Sequência de parâmetros:
+  x1  (texto): alto
+  x2  (1-100): 100
+  x3  (1-100): 100
+  x4  (0-100): 100
+  x5  (0-100): 0
+  x6  (0-100): 0
+  x7  (0-100): 0
+  x8  (0-100): 100
+  x9  (0-100): 8
+  x10 (0-100): 100
+
+Comando para reproduzir:
+modelo10.exe alto 100 100 100 0 0 0 100 8 100
+
