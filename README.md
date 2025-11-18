@@ -7,7 +7,7 @@
 - Python 3.x instalado
 - Arquivo `modelo10.exe` no diretório raiz do projeto
 
-### Passos para executar
+### Instalação
 
 1. **Clone ou navegue até o diretório:**
 
@@ -15,35 +15,45 @@
    cd /workspaces/pesquisa_operacional
    ```
 
-2. **Dê permissão de execução ao modelo:**
+2. **Instale as dependências:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Dê permissão de execução ao modelo:**
 
    ```bash
    chmod +x modelo10.exe
    ```
 
-3. **Verifique se o modelo funciona:**
+### Passos para executar
+
+1. **Execute a CLI interativa:**
 
    ```bash
-   python verificar_modelo.py
+   python executar_otimizacao.py
    ```
 
-4. **Faça um teste rápido (30 segundos):**
+2. **Siga o menu interativo:**
+   - Escolha usar configuração de arquivo ou definir manualmente
+   - Configure parâmetros, fases e objetivos
+   - Confirme e inicie a otimização
+
+3. **Alternativa - Teste rápido (30 segundos):**
 
    ```bash
    python teste_rapido.py
    ```
 
-5. **Execute a otimização completa (1 hora):**
-   ```bash
-   python executar_otimizacao.py
-   ```
-
 ### Resultados
 
-Após a execução, verifique:
+Após a execução, verifique a pasta `resultados/tentativa_DD-MM-AAAA_HHMM/`:
 
 - `relatorio_otimizacao.txt` - relatório com melhor resultado
 - `historico_otimizacao.json` - histórico completo de tentativas
+- `config_utilizada.json` - configuração usada nesta execução
+- `resumo.txt` - resumo rápido do melhor resultado
 
 ---
 
@@ -120,12 +130,11 @@ Executa a otimização completa de 1 hora.
 
 ## 📋 Checklist Antes de Executar
 
+- [ ] Python 3.x instalado
+- [ ] Dependências instaladas (`pip install -r requirements.txt`)
 - [ ] `modelo10.exe` está no diretório
-- [ ] `modelo10.exe` tem permissão de execução
-- [ ] `config.json` está configurado corretamente
-- [ ] Testou com `verificar_modelo.py`
-- [ ] Testou com `teste_rapido.py`
-- [ ] Está pronto para a execução completa
+- [ ] `modelo10.exe` tem permissão de execução (`chmod +x modelo10.exe`)
+- [ ] Pronto para executar `python executar_otimizacao.py`
 
 ## 🚀 Como Executar
 
@@ -281,16 +290,7 @@ Comando para reproduzir:
 ### Minimização════════════
 
 ```═══
-═══════════════════════════════════════════════════════════════
-                    RELATÓRIO DE OTIMIZAÇÃOMELHOR RESULTADO ENCONTRADO:
-
-
-
-
-
-
-
-
+════════
 
 
 
