@@ -1,5 +1,52 @@
 # Otimização Híbrida - Pesquisa Operacional
 
+## 🚀 Início Rápido
+
+### Pré-requisitos
+
+- Python 3.x instalado
+- Arquivo `modelo10.exe` no diretório raiz do projeto
+
+### Passos para executar
+
+1. **Clone ou navegue até o diretório:**
+
+   ```bash
+   cd /workspaces/pesquisa_operacional
+   ```
+
+2. **Dê permissão de execução ao modelo:**
+
+   ```bash
+   chmod +x modelo10.exe
+   ```
+
+3. **Verifique se o modelo funciona:**
+
+   ```bash
+   python verificar_modelo.py
+   ```
+
+4. **Faça um teste rápido (30 segundos):**
+
+   ```bash
+   python teste_rapido.py
+   ```
+
+5. **Execute a otimização completa (1 hora):**
+   ```bash
+   python executar_otimizacao.py
+   ```
+
+### Resultados
+
+Após a execução, verifique:
+
+- `relatorio_otimizacao.txt` - relatório com melhor resultado
+- `historico_otimizacao.json` - histórico completo de tentativas
+
+---
+
 ## 📝 Descrição da Tarefa
 
 Encontrar o **maior valor** possível de um programa (`modelo10.exe`) que simula um modelo matemático com 10 parâmetros de entrada:
@@ -19,18 +66,19 @@ Encontrar o **maior valor** possível de um programa (`modelo10.exe`) que simula
 - Identifica regiões promissoras
 - Combina os 3 valores categóricos com configurações de bordas
 
-#### **FASE 2: Particle Swarm Optimization - PSO** (50 minutos)
+#### **FASE 2: Particle Swarm Optimization - PSO Global** (45 minutos)
 
 - 30 partículas exploram o espaço simultaneamente
 - Cada partícula aprende com sua melhor posição e a melhor global
 - Mutação aleatória para o parâmetro categórico (15% de chance)
 - Convergência inteligente para regiões ótimas
 
-#### **FASE 3: Busca Local Refinada** (5 minutos)
+#### **FASE 3: PSO Focado em Bordas** (10 minutos)
 
-- Refina a melhor solução encontrada
-- Testa variações pequenas em cada parâmetro
-- Garante que chegamos no melhor local possível
+- Combina PSO com exploração intensiva de bordas
+- Partículas iniciam nas melhores regiões de borda encontradas
+- PSO refinado com menor inércia para busca local mais agressiva
+- Explora variações próximas aos extremos promissores
 
 ## 🧪 Como Testar
 
@@ -133,6 +181,7 @@ pesquisa_operacional/
 
 O arquivo `config.json` permite ajustar:
 
+- **Objetivo**: maximizar ou minimizar o resultado
 - Parâmetros e seus limites
 - Tempo de cada fase
 - Número de partículas do PSO
@@ -140,7 +189,35 @@ O arquivo `config.json` permite ajustar:
 - Probabilidade de mutação
 - Ativar/desativar fases
 
+### Configuração do Objetivo
+
+Por padrão, o sistema **maximiza** o valor de retorno do modelo. Para **minimizar**, altere:
+
+```json
+{
+  "objetivo": "minimizar"
+}
+```
+
+Opções disponíveis:
+
+- `"maximizar"` (padrão) - busca o maior valor possível
+- `"minimizar"` - busca o menor valor possível
+
 ## 🔧 Personalização
+
+### Alterar objetivo (maximizar/minimizar)
+
+Edite `config.json`:
+
+```json
+{
+  "objetivo": "minimizar",
+  "parametros": {
+    // ...
+  }
+}
+```
 
 ### Ajustar tempos das fases
 
@@ -152,10 +229,10 @@ Edite `config.json`:
     "tempo_max": 300  // 5 minutos
   },
   "pso": {
-    "tempo_max": 3000  // 50 minutos
+    "tempo_max": 2700  // 45 minutos
   },
-  "busca_local": {
-    "tempo_max": 300  // 5 minutos
+  "pso_bordas": {
+    "tempo_max": 600  // 10 minutos
   }
 }
 ```
@@ -163,20 +240,83 @@ Edite `config.json`:
 ### Desativar uma fase
 
 ```json
-"exploracao_bordas": {
+"pso_bordas": {
   "ativo": false
 }
 ```
 
 ## 📈 Exemplo de Resultado
 
-```
+### Maximização (padrão) Ajustar tempos das fases
+
+````
 ═══════════════════════════════════════════════════════════════
-                    RELATÓRIO DE OTIMIZAÇÃO
+                    RELATÓRIO DE OTIMIZAÇÃO```json
 ═══════════════════════════════════════════════════════════════
 
+OBJETIVO: MAXIMIZAR00  // 5 minutos
+  },
 MELHOR RESULTADO ENCONTRADO:
------------------------------
+----------------------------- 50 minutos
+Valor: 9876.543210
+
+Parâmetros:/ 5 minutos
+  x1   (categorico): alto
+  x2   (1-100)     : 87
+  x3   (1-100)     : 45
+  x4   (1-100)     : 92
+  x5   (1-100)     : 33
+  x6   (1-100)     : 67
+  x7   (1-100)     : 54```json
+  x8   (1-100)     : 78
+  x9   (1-100)     : 21
+  x10  (1-100)     : 99
+````
+
+Comando para reproduzir:
+./modelo10.exe alto 87 45 92 33 67 54 78 21 99## 📈 Exemplo de Resultado
+
+````
+
+### Minimização════════════
+
+```═══
+═══════════════════════════════════════════════════════════════
+                    RELATÓRIO DE OTIMIZAÇÃOMELHOR RESULTADO ENCONTRADO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6. **Eficiente**: Aproveita todo o tempo disponível5. **Reproduzível**: Comando exato para reproduzir resultado4. **Auditável**: Histórico completo de tentativas3. **Configurável**: Fácil ajustar sem mudar código2. **Refinamento Local**: Busca local garante otimalidade1. **Exploração Global**: PSO evita mínimos locais## 🎓 Vantagens da Estratégia```./modelo10.exe baixo 23 15 7 3 1 6 2 9 4Comando para reproduzir:  x10  (1-100)     : 4  x9   (1-100)     : 9  x8   (1-100)     : 2  x7   (1-100)     : 6  x6   (1-100)     : 1  x5   (1-100)     : 3  x4   (1-100)     : 7  x3   (1-100)     : 15  x2   (1-100)     : 23  x1   (categorico): baixoParâmetros:Valor: 12.345678-----------------------------MELHOR RESULTADO ENCONTRADO:OBJETIVO: MINIMIZAR═══════════════════════════════════════════════════════════════-----------------------------
 Valor: 9876.543210
 
 Parâmetros:
@@ -193,13 +333,14 @@ Parâmetros:
 
 Comando para reproduzir:
 ./modelo10.exe alto 87 45 92 33 67 54 78 21 99
-```
+````
 
 ## 🎓 Vantagens da Estratégia
 
 1. **Exploração Global**: PSO evita mínimos locais
-2. **Refinamento Local**: Busca local garante otimalidade
+2. **Foco em Bordas**: Fase 3 intensifica busca em regiões extremas promissoras
 3. **Configurável**: Fácil ajustar sem mudar código
 4. **Auditável**: Histórico completo de tentativas
 5. **Reproduzível**: Comando exato para reproduzir resultado
 6. **Eficiente**: Aproveita todo o tempo disponível
+7. **Híbrido Inteligente**: Combina exploração global com refinamento focado

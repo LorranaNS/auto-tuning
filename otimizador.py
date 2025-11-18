@@ -182,44 +182,117 @@ class HybridOptimizer:
                 print(f"Iteração {iteration} | Tentativas: {self.attempts} | "
                       f"Tempo: {elapsed:.0f}s | Melhor: {self.best_value:.2f}")
     
-    def local_search(self):
-        """Fase 3: Busca local"""
-        config = self.config_manager.get_fase_config('busca_local')
+    def pso_bordas(self):
+        """Fase 3: PSO Focado em Bordas - Híbrido"""
+        config = self.config_manager.get_fase_config('pso_bordas')
         if not config.get('ativo', True):
-            print("\nFASE 3: Busca local desativada")
+            print("\nFASE 3: PSO Focado em Bordas desativada")
             return
         
-        print("\nFASE 3: Busca local...")
+        print("\nFASE 3: PSO Focado em Bordas (Híbrido)...")
         
-        if self.best_params is None:
-            return
+        max_time = config.get('tempo_max', 600)
+        n_particles = config.get('num_particulas', 15)
+        w = config.get('inercia', 0.4)  # Menor inércia para busca mais local
+        c1 = config.get('c1', 2.0)  # Maior componente cognitivo
+        c2 = config.get('c2', 1.0)  # Menor componente social
+        prob_mutacao = config.get('probabilidade_mutacao', 0.2)
         
-        max_time = config.get('tempo_max', 300)
-        deltas = config.get('deltas', [-5, -2, -1, 0, 1, 2, 5])
+        categoricos = self.config_manager.get_categorico_params()
+        numericos = self.config_manager.get_numerico_params()
         
-        # Busca local em parâmetros numéricos
-        for dx in deltas:
-            for i, param in enumerate(self.config_manager.config['parametros']):
-                if time.time() - self.start_time > max_time:
-                    return
-                
+        # Identifica regiões de borda promissoras baseadas no melhor resultado
+        edge_regions = []
+        if self.best_params:
+            # Cria variações nas bordas do melhor resultado
+            for _ in range(n_particles):
+                particle = list(self.best_params)
+                # Para cada parâmetro numérico, probabilidade de ir para borda
+                for j, param in enumerate(self.config_manager.config['parametros']):
+                    if param['tipo'] == 'numerico':
+                        if random.random() < 0.4:  # 40% chance de ir para borda
+                            particle[j] = random.choice([param['min'], param['max']])
+                        else:
+                            # Perturbação pequena
+                            particle[j] = self.config_manager.clamp_value(
+                                param['nome'],
+                                particle[j] + random.randint(-10, 10)
+                            )
+                edge_regions.append(particle)
+        else:
+            # Se não há melhor resultado, inicializa aleatoriamente em bordas
+            for _ in range(n_particles):
+                particle = []
+                for param in self.config_manager.config['parametros']:
+                    if param['tipo'] == 'numerico':
+                        # Favorece bordas: 60% min ou max, 40% aleatório
+                        if random.random() < 0.6:
+                            particle.append(random.choice([param['min'], param['max']]))
+                        else:
+                            particle.append(random.randint(param['min'], param['max']))
+                    else:
+                        particle.append(random.choice(param['opcoes']))
+                edge_regions.append(particle)
+        
+        particles = edge_regions
+        velocities = []
+        personal_best = []
+        personal_best_values = []
+        
+        # Inicializa velocidades e avalia partículas
+        for particle in particles:
+            velocity = []
+            for param in self.config_manager.config['parametros']:
                 if param['tipo'] == 'numerico':
-                    params = list(self.best_params)
-                    params[i] = self.config_manager.clamp_value(
-                        param['nome'], 
-                        params[i] + dx
-                    )
-                    self.evaluate(*params)
+                    velocity.append(random.uniform(-5, 5))  # Velocidade menor
+                else:
+                    velocity.append(0)
+            velocities.append(velocity)
+            
+            value = self.evaluate(*particle)
+            personal_best.append(particle[:])
+            personal_best_values.append(value)
         
-        # Testa variações de parâmetros categóricos
-        for i, param in enumerate(self.config_manager.config['parametros']):
-            if param['tipo'] == 'categorico':
-                for opcao in param['opcoes']:
-                    if time.time() - self.start_time > max_time:
-                        return
-                    params = list(self.best_params)
-                    params[i] = opcao
-                    self.evaluate(*params)
+        iteration = 0
+        phase_start = time.time()
+        
+        while time.time() - phase_start < max_time:
+            iteration += 1
+            
+            for i in range(n_particles):
+                if time.time() - phase_start > max_time:
+                    break
+                
+                # Atualiza partículas numéricas com PSO
+                for j, param in enumerate(self.config_manager.config['parametros']):
+                    if param['tipo'] == 'numerico':
+                        r1, r2 = random.random(), random.random()
+                        velocities[i][j] = (w * velocities[i][j] + 
+                                           c1 * r1 * (personal_best[i][j] - particles[i][j]) +
+                                           c2 * r2 * (self.best_params[j] - particles[i][j]))
+                        
+                        new_pos = int(particles[i][j] + velocities[i][j])
+                        particles[i][j] = self.config_manager.clamp_value(param['nome'], new_pos)
+                        
+                        # Ocasionalmente força para bordas
+                        if random.random() < 0.15:
+                            particles[i][j] = random.choice([param['min'], param['max']])
+                
+                # Mutação para parâmetros categóricos
+                for j, param in enumerate(self.config_manager.config['parametros']):
+                    if param['tipo'] == 'categorico' and random.random() < prob_mutacao:
+                        particles[i][j] = self.config_manager.get_random_value(param['nome'])
+                
+                value = self.evaluate(*particles[i])
+                
+                if value > personal_best_values[i]:
+                    personal_best[i] = particles[i][:]
+                    personal_best_values[i] = value
+            
+            if iteration % 3 == 0:
+                elapsed = time.time() - phase_start
+                print(f"Iteração {iteration} | Tentativas fase: {self.attempts - sum(1 for h in self.history if h['time'] < self.history[-1]['time'] - elapsed)} | "
+                      f"Tempo fase: {elapsed:.0f}s | Melhor global: {self.best_value:.2f}")
     
     def generate_report(self):
         elapsed_time = time.time() - self.start_time
@@ -251,8 +324,8 @@ ESTRATÉGIA UTILIZADA:
 Abordagem Híbrida configurável com três fases:
 
 1. EXPLORAÇÃO DE BORDAS: {self.config_manager.get_fase_config('exploracao_bordas').get('tempo_max', 0)/60:.1f} min
-2. PARTICLE SWARM OPTIMIZATION (PSO): {self.config_manager.get_fase_config('pso').get('tempo_max', 0)/60:.1f} min
-3. BUSCA LOCAL REFINADA: {self.config_manager.get_fase_config('busca_local').get('tempo_max', 0)/60:.1f} min
+2. PSO GLOBAL: {self.config_manager.get_fase_config('pso').get('tempo_max', 0)/60:.1f} min
+3. PSO FOCADO EM BORDAS: {self.config_manager.get_fase_config('pso_bordas').get('tempo_max', 0)/60:.1f} min
 
 RESULTADOS:
 -----------
