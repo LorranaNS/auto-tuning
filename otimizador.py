@@ -37,8 +37,7 @@ class HybridOptimizer:
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)
         
-        # Cria subpasta com data/hora (formato: tentativa_18-11-2025_1946)
-        # Usa underscore ao invés de dois pontos para compatibilidade Windows
+        # Cria subpasta com data/hora (formato: tentativa_21-01-2025_1930)
         timestamp = datetime.now().strftime('tentativa_%d-%m-%Y_%H%M')
         resultado_dir = os.path.join(base_dir, timestamp)
         os.makedirs(resultado_dir, exist_ok=True)
@@ -56,18 +55,8 @@ class HybridOptimizer:
                     self.config_manager.clamp_value(param_config['nome'], value)
                 )
             
-            # Normaliza o caminho do executável para o sistema operacional
-            exe_path = os.path.normpath(self.exe_path)
-            cmd = [exe_path] + [str(p) for p in validated_params]
-            
-            # Windows pode precisar de shell=True para executáveis .exe
-            result = subprocess.run(
-                cmd, 
-                capture_output=True, 
-                text=True, 
-                timeout=self.timeout,
-                shell=(os.name == 'nt')  # True no Windows
-            )
+            cmd = [self.exe_path] + [str(p) for p in validated_params]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=self.timeout)
             self.attempts += 1
             
             output = result.stdout.strip()
@@ -93,9 +82,6 @@ class HybridOptimizer:
             })
             
             return value
-        except subprocess.TimeoutExpired:
-            print(f"Erro na execução: Timeout ({self.timeout}s excedido)")
-            return float('inf') if not self.is_maximizing else float('-inf')
         except Exception as e:
             print(f"Erro na execução: {e}")
             return float('inf') if not self.is_maximizing else float('-inf')
