@@ -1,4 +1,5 @@
 {
+  "objetivo": "maximizar",
   "modelo": {
     "executavel": "./modelo10.exe",
     "timeout": 10
@@ -91,17 +92,21 @@
       },
       "pso": {
         "ativo": true,
-        "tempo_max": 3000,
+        "tempo_max": 2700,
         "num_particulas": 30,
         "inercia": 0.7,
         "c1": 1.5,
         "c2": 1.5,
         "probabilidade_mutacao": 0.15
       },
-      "busca_local": {
+      "pso_bordas": {
         "ativo": true,
-        "tempo_max": 300,
-        "deltas": [-10, -5, -3, -2, -1, 0, 1, 2, 3, 5, 10]
+        "tempo_max": 600,
+        "num_particulas": 15,
+        "inercia": 0.4,
+        "c1": 2.0,
+        "c2": 1.0,
+        "probabilidade_mutacao": 0.2
       }
     },
     "tempo_total_max": 3600

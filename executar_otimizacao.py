@@ -28,12 +28,16 @@ def main():
         # Inicializa otimizador
         optimizer = HybridOptimizer(temp_config)
         
-        # Executa as fases
+        # Fase 1: Exploração de bordas
         optimizer.explore_edges()
-        optimizer.pso_optimize()
-        optimizer.local_search()
         
-        # Gera relatório
+        # Fase 2: PSO
+        optimizer.pso_optimize()
+        
+        # Fase 3: PSO Focado em Bordas (substituiu busca local)
+        optimizer.pso_bordas()
+        
+        # Gera relatório final
         optimizer.generate_report()
         
         console.print("\n[bold green]✓ Otimização concluída com sucesso![/bold green]")

@@ -1,4 +1,5 @@
 import questionary
+from questionary import Style
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
@@ -10,14 +11,32 @@ from config_manager import ConfigManager
 
 console = Console()
 
+# Estilo personalizado para questionary
+custom_style = Style([
+    ('qmark', 'fg:#673ab7 bold'),       # Ícone de pergunta (?)
+    ('question', 'bold'),                # Texto da pergunta
+    ('answer', 'fg:#f44336 bold'),      # Resposta selecionada
+    ('pointer', 'fg:#673ab7 bold'),     # Ponteiro (seta)
+    ('highlighted', 'fg:#673ab7 bold'), # Item destacado
+    ('selected', 'fg:#cc5454'),         # Item selecionado (checkboxes)
+    ('separator', 'fg:#cc5454'),        # Separador
+    ('instruction', ''),                # Instruções
+    ('text', ''),                       # Texto normal
+    ('disabled', 'fg:#858585 italic')   # Texto desabilitado
+])
+
+# Configuração de ponteiros personalizados
+custom_pointer = '➤'  # Opções: ➤, ▶, →, ►, ❯, »
+# Outras opções de setas: '▸', '▶', '➜', '⟩', '❱', '▻'
+
 def print_banner():
     """Exibe banner inicial"""
     banner = """
     ╔═══════════════════════════════════════════════════════════╗
     ║                                                           ║
-    ║   🚀  OTIMIZAÇÃO HÍBRIDA - PESQUISA OPERACIONAL  🚀       ║
+    ║   🚀  OTIMIZAÇÃO HÍBRIDA - PESQUISA OPERACIONAL  🚀      ║
     ║                                                           ║
-    ║           Sistema de Otimização com PSO Híbrido          ║
+    ║           Sistema de Otimização com PSO Híbrido           ║
     ║                                                           ║
     ╚═══════════════════════════════════════════════════════════╝
     """
@@ -37,7 +56,8 @@ def configurar_parametros():
     num_params = questionary.text(
         "Quantos parâmetros o modelo possui?",
         default="10",
-        validate=lambda x: x.isdigit() and int(x) > 0
+        validate=lambda x: x.isdigit() and int(x) > 0,
+        style=custom_style
     ).ask()
     
     if num_params is None:
@@ -54,7 +74,8 @@ def configurar_parametros():
         # Nome do parâmetro
         nome = questionary.text(
             f"  Nome:",
-            default=f"x{i+1}"
+            default=f"x{i+1}",
+            style=custom_style
         ).ask()
         
         if nome is None:
@@ -66,7 +87,9 @@ def configurar_parametros():
             choices=[
                 questionary.Choice("Numérico (inteiro com limites)", value="numerico"),
                 questionary.Choice("Categórico (texto com opções)", value="categorico")
-            ]
+            ],
+            style=custom_style,
+            pointer=custom_pointer
         ).ask()
         
         if tipo is None:
@@ -82,7 +105,8 @@ def configurar_parametros():
             min_val = questionary.text(
                 f"  Valor mínimo:",
                 default="1",
-                validate=lambda x: x.lstrip('-').isdigit()
+                validate=lambda x: x.lstrip('-').isdigit(),
+                style=custom_style
             ).ask()
             
             if min_val is None:
@@ -91,7 +115,8 @@ def configurar_parametros():
             max_val = questionary.text(
                 f"  Valor máximo:",
                 default="100",
-                validate=lambda x: x.lstrip('-').isdigit() and int(x) >= int(min_val)
+                validate=lambda x: x.lstrip('-').isdigit() and int(x) >= int(min_val),
+                style=custom_style
             ).ask()
             
             if max_val is None:
@@ -106,7 +131,8 @@ def configurar_parametros():
             console.print(f"  [yellow]Digite as opções separadas por vírgula (ex: baixo,medio,alto):[/yellow]")
             opcoes_str = questionary.text(
                 f"  Opções:",
-                default="baixo,medio,alto"
+                default="baixo,medio,alto",
+                style=custom_style
             ).ask()
             
             if opcoes_str is None:
@@ -131,7 +157,8 @@ def configurar_fases():
     console.print("[bold cyan]FASE 1: Exploração de Bordas[/bold cyan]")
     fase1_ativa = questionary.confirm(
         "Ativar Fase 1 (Exploração de Bordas)?",
-        default=True
+        default=True,
+        style=custom_style
     ).ask()
     
     if fase1_ativa is None:
@@ -142,7 +169,8 @@ def configurar_fases():
         tempo1_input = questionary.text(
             "Tempo máximo em segundos:",
             default="300",
-            validate=lambda x: x.isdigit() and int(x) > 0
+            validate=lambda x: x.isdigit() and int(x) > 0,
+            style=custom_style
         ).ask()
         
         if tempo1_input is None:
@@ -159,7 +187,8 @@ def configurar_fases():
     console.print("\n[bold cyan]FASE 2: PSO Global[/bold cyan]")
     fase2_ativa = questionary.confirm(
         "Ativar Fase 2 (PSO Global)?",
-        default=True
+        default=True,
+        style=custom_style
     ).ask()
     
     if fase2_ativa is None:
@@ -171,7 +200,8 @@ def configurar_fases():
         tempo2_input = questionary.text(
             "Tempo máximo em segundos:",
             default="2700",
-            validate=lambda x: x.isdigit() and int(x) > 0
+            validate=lambda x: x.isdigit() and int(x) > 0,
+            style=custom_style
         ).ask()
         
         if tempo2_input is None:
@@ -181,7 +211,8 @@ def configurar_fases():
         num_particulas_input = questionary.text(
             "Número de partículas:",
             default="30",
-            validate=lambda x: x.isdigit() and int(x) > 0
+            validate=lambda x: x.isdigit() and int(x) > 0,
+            style=custom_style
         ).ask()
         
         if num_particulas_input is None:
@@ -202,7 +233,8 @@ def configurar_fases():
     console.print("\n[bold cyan]FASE 3: PSO Focado em Bordas[/bold cyan]")
     fase3_ativa = questionary.confirm(
         "Ativar Fase 3 (PSO Focado em Bordas)?",
-        default=True
+        default=True,
+        style=custom_style
     ).ask()
     
     if fase3_ativa is None:
@@ -213,7 +245,8 @@ def configurar_fases():
         tempo3_input = questionary.text(
             "Tempo máximo em segundos:",
             default="600",
-            validate=lambda x: x.isdigit() and int(x) > 0
+            validate=lambda x: x.isdigit() and int(x) > 0,
+            style=custom_style
         ).ask()
         
         if tempo3_input is None:
@@ -292,7 +325,9 @@ def run_cli():
             questionary.Choice("📁 Usar configuração do arquivo (config.json)", value="arquivo"),
             questionary.Choice("⚙️  Definir parâmetros manualmente agora", value="manual"),
             questionary.Choice("🚪 Sair", value="sair")
-        ]
+        ],
+        style=custom_style,
+        pointer=custom_pointer
     ).ask()
     
     if modo is None or modo == "sair":
@@ -305,7 +340,8 @@ def run_cli():
         # Carregar do arquivo
         arquivo = questionary.text(
             "Caminho do arquivo de configuração:",
-            default="config.json"
+            default="config.json",
+            style=custom_style
         ).ask()
         
         if arquivo is None:
@@ -330,7 +366,9 @@ def run_cli():
             choices=[
                 questionary.Choice("📈 Maximizar (buscar o maior valor)", value="maximizar"),
                 questionary.Choice("📉 Minimizar (buscar o menor valor)", value="minimizar")
-            ]
+            ],
+            style=custom_style,
+            pointer=custom_pointer
         ).ask()
         
         if objetivo is None:
@@ -339,7 +377,8 @@ def run_cli():
         # Caminho do executável
         executavel = questionary.text(
             "Caminho do executável do modelo:",
-            default="./modelo10.exe"
+            default="./modelo10.exe",
+            style=custom_style
         ).ask()
         
         if executavel is None:
@@ -361,13 +400,15 @@ def run_cli():
         # Salvar configuração
         salvar = questionary.confirm(
             "\nDeseja salvar esta configuração em um arquivo?",
-            default=True
+            default=True,
+            style=custom_style
         ).ask()
         
         if salvar:
             nome_arquivo = questionary.text(
                 "Nome do arquivo:",
-                default="config_custom.json"
+                default="config_custom.json",
+                style=custom_style
             ).ask()
             
             if nome_arquivo:
@@ -384,7 +425,8 @@ def run_cli():
     # Confirmação final
     confirmar = questionary.confirm(
         "Deseja iniciar a otimização com esta configuração?",
-        default=True
+        default=True,
+        style=custom_style
     ).ask()
     
     if not confirmar:

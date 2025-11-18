@@ -12,7 +12,16 @@ class HybridOptimizer:
         self.config_manager = ConfigManager(config_path)
         self.exe_path = self.config_manager.get_modelo_config()['executavel']
         self.timeout = self.config_manager.get_modelo_config()['timeout']
-        self.best_value = float('-inf')
+        
+        # Inicializa best_value baseado no objetivo
+        objetivo = self.config_manager.config.get('objetivo', 'maximizar').lower()
+        if objetivo == 'minimizar':
+            self.best_value = float('inf')
+            self.is_maximizing = False
+        else:
+            self.best_value = float('-inf')
+            self.is_maximizing = True
+            
         self.best_params = None
         self.attempts = 0
         self.start_time = time.time()
@@ -52,14 +61,18 @@ class HybridOptimizer:
             
             output = result.stdout.strip()
             try:
-                value = float(output.split()[-1]) if output else float('-inf')
+                value = float(output.split()[-1]) if output else (float('inf') if not self.is_maximizing else float('-inf'))
             except:
-                value = float('-inf')
+                value = float('inf') if not self.is_maximizing else float('-inf')
             
-            if value > self.best_value:
+            # Verifica se é melhor baseado no objetivo
+            is_better = (value > self.best_value) if self.is_maximizing else (value < self.best_value)
+            
+            if is_better:
                 self.best_value = value
                 self.best_params = tuple(validated_params)
-                print(f"NOVO MELHOR: {value:.2f} | {self.best_params}")
+                objetivo_str = "MAXIMIZAR" if self.is_maximizing else "MINIMIZAR"
+                print(f"NOVO MELHOR ({objetivo_str}): {value:.2f} | {self.best_params}")
             
             self.history.append({
                 'attempt': self.attempts,
@@ -71,7 +84,7 @@ class HybridOptimizer:
             return value
         except Exception as e:
             print(f"Erro na execução: {e}")
-            return float('-inf')
+            return float('inf') if not self.is_maximizing else float('-inf')
     
     def explore_edges(self):
         """Fase 1: Exploração de bordas"""
@@ -118,9 +131,6 @@ class HybridOptimizer:
         c2 = config.get('c2', 1.5)
         prob_mutacao = config.get('probabilidade_mutacao', 0.1)
         
-        categoricos = self.config_manager.get_categorico_params()
-        numericos = self.config_manager.get_numerico_params()
-        
         particles = []
         velocities = []
         personal_best = []
@@ -146,11 +156,13 @@ class HybridOptimizer:
             personal_best_values.append(value)
         
         iteration = 0
-        while time.time() - self.start_time < max_time:
+        phase_start = time.time()
+        
+        while time.time() - phase_start < max_time:
             iteration += 1
             
             for i in range(n_particles):
-                if time.time() - self.start_time > max_time:
+                if time.time() - phase_start > max_time:
                     break
                 
                 # Atualiza partículas numéricas
@@ -173,12 +185,14 @@ class HybridOptimizer:
                 
                 value = self.evaluate(*particles[i])
                 
-                if value > personal_best_values[i]:
+                # Verifica se é melhor baseado no objetivo
+                is_better = (value > personal_best_values[i]) if self.is_maximizing else (value < personal_best_values[i])
+                if is_better:
                     personal_best[i] = particles[i][:]
                     personal_best_values[i] = value
             
             if iteration % 5 == 0:
-                elapsed = time.time() - self.start_time
+                elapsed = time.time() - phase_start
                 print(f"Iteração {iteration} | Tentativas: {self.attempts} | "
                       f"Tempo: {elapsed:.0f}s | Melhor: {self.best_value:.2f}")
     
@@ -197,9 +211,6 @@ class HybridOptimizer:
         c1 = config.get('c1', 2.0)  # Maior componente cognitivo
         c2 = config.get('c2', 1.0)  # Menor componente social
         prob_mutacao = config.get('probabilidade_mutacao', 0.2)
-        
-        categoricos = self.config_manager.get_categorico_params()
-        numericos = self.config_manager.get_numerico_params()
         
         # Identifica regiões de borda promissoras baseadas no melhor resultado
         edge_regions = []
@@ -305,12 +316,16 @@ class HybridOptimizer:
                 tipo_desc = f"({param['min']}-{param['max']})"
             params_info += f"  {param['nome']:4} {tipo_desc:12}: {value}\n"
         
+        objetivo_str = "MAXIMIZAR" if self.is_maximizing else "MINIMIZAR"
+        
         report = f"""
 ═══════════════════════════════════════════════════════════════
                     RELATÓRIO DE OTIMIZAÇÃO
 ═══════════════════════════════════════════════════════════════
 
 PASTA DE RESULTADOS: {self.resultado_dir}
+
+OBJETIVO: {objetivo_str}
 
 CONFIGURAÇÃO:
 -------------

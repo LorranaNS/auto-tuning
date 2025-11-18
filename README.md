@@ -36,6 +36,7 @@
    ```
 
 2. **Siga o menu interativo:**
+
    - Escolha usar configuração de arquivo ou definir manualmente
    - Configure parâmetros, fases e objetivos
    - Confirme e inicie a otimização
