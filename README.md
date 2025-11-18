@@ -9,30 +9,43 @@
 
 ### Instalação
 
-1. **Clone ou navegue até o diretório:**
+**Windows:**
 
-   ```bash
-   cd /workspaces/pesquisa_operacional
-   ```
+```powershell
+# Navegue até o diretório
+cd C:\caminho\para\pesquisa_operacional
 
-2. **Instale as dependências:**
+# Instale as dependências
+pip install -r requirements.txt
+```
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Linux/Mac:**
 
-3. **Dê permissão de execução ao modelo:**
+```bash
+# Navegue até o diretório
+cd /caminho/para/pesquisa_operacional
 
-   ```bash
-   chmod +x modelo10.exe
-   ```
+# Instale as dependências
+pip install -r requirements.txt
+
+# Dê permissão de execução ao modelo (apenas Linux/Mac)
+chmod +x modelo10.exe
+```
 
 ### Passos para executar
 
 1. **Execute a CLI interativa:**
 
-   ```bash
+   **Windows:**
+
+   ```powershell
    python executar_otimizacao.py
+   ```
+
+   **Linux/Mac:**
+
+   ```bash
+   python3 executar_otimizacao.py
    ```
 
 2. **Siga o menu interativo:**
@@ -49,7 +62,7 @@
 
 ### Resultados
 
-Após a execução, verifique a pasta `resultados/tentativa_DD-MM-AAAA_HHMM/`:
+Após a execução, verifique a pasta `resultados\tentativa_DD-MM-AAAA_HHMM\` (Windows) ou `resultados/tentativa_DD-MM-AAAA_HHMM/` (Linux):
 
 - `relatorio_otimizacao.txt` - relatório com melhor resultado
 - `historico_otimizacao.json` - histórico completo de tentativas
@@ -115,6 +128,14 @@ Executa otimização reduzida para verificar se tudo está funcionando.
 
 ### 3. Teste manual do modelo
 
+**Windows:**
+
+```powershell
+.\modelo10.exe baixo 50 50 50 50 50 50 50 50 50
+```
+
+**Linux/Mac:**
+
 ```bash
 ./modelo10.exe baixo 50 50 50 50 50 50 50 50 50
 ```
@@ -134,7 +155,7 @@ Executa a otimização completa de 1 hora.
 - [ ] Python 3.x instalado
 - [ ] Dependências instaladas (`pip install -r requirements.txt`)
 - [ ] `modelo10.exe` está no diretório
-- [ ] `modelo10.exe` tem permissão de execução (`chmod +x modelo10.exe`)
+- [ ] ~~`modelo10.exe` tem permissão de execução (apenas Linux/Mac)~~
 - [ ] Pronto para executar `python executar_otimizacao.py`
 
 ## 🚀 Como Executar
@@ -345,3 +366,25 @@ Comando para reproduzir:
 5. **Reproduzível**: Comando exato para reproduzir resultado
 6. **Eficiente**: Aproveita todo o tempo disponível
 7. **Híbrido Inteligente**: Combina exploração global com refinamento focado
+
+## 💡 Dicas para Windows
+
+### Limpando cache Python no Windows
+
+```powershell
+# PowerShell
+Get-ChildItem -Path . -Include __pycache__ -Recurse -Directory | Remove-Item -Recurse -Force
+Get-ChildItem -Path . -Include *.pyc -Recurse -File | Remove-Item -Force
+```
+
+### Executando sem cache
+
+```powershell
+python -B executar_otimizacao.py
+```
+
+### Verificando versão do Python
+
+```powershell
+python --version
+```
