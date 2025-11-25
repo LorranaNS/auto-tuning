@@ -96,24 +96,33 @@ class HybridOptimizer:
         print("FASE 1: Explorando bordas...")
         max_time = config.get('tempo_max', 300)
         
-        # Obtém opções do primeiro parâmetro categórico
-        categoricos = self.config_manager.get_categorico_params()
-        x1_options = categoricos[0]['opcoes'] if categoricos else ['baixo']
+        # Obtém configurações de teste do config
+        edge_configs = config.get('configuracoes_teste', [
+            [100, 100, 100, 100, 100],
+            [1, 1, 1, 1, 1],
+            [100, 1, 100, 1, 100],
+            [1, 100, 1, 100, 1],
+            [50, 50, 50, 50, 50]
+        ])
         
-        edge_configs = config.get('configuracoes_teste', [[100, 100], [1, 1]])
-        numericos = self.config_manager.get_numerico_params()
-        num_params_restantes = len(numericos) - 2  # -2 porque x2 e x3 vêm das edge_configs
-        
-        for x1 in x1_options:
-            for x2, x3 in edge_configs:
-                if time.time() - self.start_time > max_time:
-                    return
-                
-                for config_values in [[100]*num_params_restantes, [0]*num_params_restantes, 
-                                      [50]*num_params_restantes]:
-                    if time.time() - self.start_time > max_time:
-                        return
-                    self.evaluate(x1, x2, x3, *config_values)
+        # Testa cada configuração de borda
+        for edge_config in edge_configs:
+            if time.time() - self.start_time > max_time:
+                return
+            
+            # Garante que temos o número correto de parâmetros
+            num_params = len(self.config_manager.config['parametros'])
+            
+            # Ajusta a configuração se necessário
+            if len(edge_config) < num_params:
+                # Completa com valores médios
+                edge_config = list(edge_config) + [50] * (num_params - len(edge_config))
+            elif len(edge_config) > num_params:
+                # Trunca
+                edge_config = edge_config[:num_params]
+            
+            # Avalia esta configuração
+            self.evaluate(*edge_config)
     
     def pso_optimize(self):
         """Fase 2: PSO"""
