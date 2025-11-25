@@ -19,13 +19,13 @@ def main():
         console.print("\n[yellow]Programa encerrado.[/yellow]")
         return
     
-    # Salva configuração temporária
+    # Salva configuração temporária (será usada pelo otimizador)
     temp_config = "temp_config.json"
     with open(temp_config, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=2, ensure_ascii=False)
     
     try:
-        # Inicializa otimizador
+        # Inicializa otimizador com arquivo temporário
         optimizer = HybridOptimizer(temp_config)
         
         # Fase 1: Exploração de bordas
@@ -34,13 +34,17 @@ def main():
         # Fase 2: PSO
         optimizer.pso_optimize()
         
-        # Fase 3: PSO Focado em Bordas (substituiu busca local)
+        # Fase 3: PSO Focado em Bordas
         optimizer.pso_bordas()
         
         # Gera relatório final
         optimizer.generate_report()
         
         console.print("\n[bold green]✓ Otimização concluída com sucesso![/bold green]")
+        
+        # Remove arquivo temporário
+        if os.path.exists(temp_config):
+            os.remove(temp_config)
         
     except KeyboardInterrupt:
         console.print("\n\n[yellow]⚠ Otimização interrompida pelo usuário.[/yellow]")
