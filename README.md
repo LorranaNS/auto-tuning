@@ -70,20 +70,20 @@ Encontrar o **maior valor** possível de um programa (`modelo10.exe`) que simula
 
 ### Abordagem Híbrida em 3 Fases
 
-#### **FASE 1: Exploração de Bordas** (5 minutos)
+#### **FASE 1: Exploração de Bordas** (20 minutos)
 
 - Testa combinações nos extremos do espaço de busca
 - Identifica regiões promissoras
 - Combina os 3 valores categóricos com configurações de bordas
 
-#### **FASE 2: Particle Swarm Optimization - PSO Global** (45 minutos)
+#### **FASE 2: Particle Swarm Optimization - PSO Global** (20 minutos)
 
 - 30 partículas exploram o espaço simultaneamente
 - Cada partícula aprende com sua melhor posição e a melhor global
 - Mutação aleatória para o parâmetro categórico (15% de chance)
 - Convergência inteligente para regiões ótimas
 
-#### **FASE 3: PSO Focado em Bordas** (10 minutos)
+#### **FASE 3: PSO Focado em Bordas** (20 minutos)
 
 - Combina PSO com exploração intensiva de bordas
 - Partículas iniciam nas melhores regiões de borda encontradas

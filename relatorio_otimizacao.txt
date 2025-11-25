@@ -7,7 +7,7 @@ ESTRATÉGIA UTILIZADA:
 --------------------
 Abordagem Híbrida combinando três técnicas:
 
-1. EXPLORAÇÃO DE BORDAS (5 min):
+1. EXPLORAÇÃO DE BORDAS (20 min):
    - Teste sistemático de valores extremos (0, 1, 50, 100)
    - Combinações de parâmetros nas bordas do espaço de busca
    - Testes com todas as opções de x1 (baixo, médio, alto)
@@ -18,7 +18,7 @@ Abordagem Híbrida combinando três técnicas:
    - Atualização dinâmica baseada em melhores resultados
    - Parâmetros: inércia=0.7, c1=1.5, c2=1.5
 
-3. BUSCA LOCAL REFINADA (5 min):
+3. BUSCA LOCAL REFINADA (20 min):
    - Exploração intensiva ao redor do melhor resultado
    - Variações incrementais em cada parâmetro
    - Teste de todas as opções de x1
