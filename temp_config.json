@@ -1,7 +1,7 @@
 {
   "objetivo": "maximizar",
   "modelo": {
-    "executavel": "./modelo10.exe",
+    "executavel": "./simulado.exe",
     "timeout": 10
   },
   "parametros": [
@@ -21,44 +21,86 @@
     },
     {
       "nome": "x3",
-      "tipo": "categorico",
-      "opcoes": [
-        "baixo"
-      ],
-      "descricao": "Parâmetro categórico 3"
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 3"
+    },
+    {
+      "nome": "x4",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 4"
+    },
+    {
+      "nome": "x5",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 100,
+      "descricao": "Parâmetro numérico 5"
     }
   ],
   "otimizacao": {
     "fases": {
       "exploracao_bordas": {
         "ativo": true,
-        "tempo_max": 300,
+        "tempo_max": 600,
         "configuracoes_teste": [
           [
             100,
+            100,
+            100,
+            100,
             100
           ],
           [
+            1,
+            1,
+            1,
             1,
             1
           ],
           [
             100,
-            1
-          ],
-          [
+            1,
+            100,
             1,
             100
           ],
           [
+            1,
+            100,
+            1,
+            100,
+            1
+          ],
+          [
+            50,
+            50,
+            50,
             50,
             50
+          ],
+          [
+            75,
+            75,
+            75,
+            75,
+            75
+          ],
+          [
+            25,
+            25,
+            25,
+            25,
+            25
           ]
         ]
       },
       "pso": {
         "ativo": true,
-        "tempo_max": 2700,
+        "tempo_max": 600,
         "num_particulas": 30,
         "inercia": 0.7,
         "c1": 1.5,
@@ -75,6 +117,6 @@
         "probabilidade_mutacao": 0.2
       }
     },
-    "tempo_total_max": 3600
+    "tempo_total_max": 1800
   }
 }

@@ -308,7 +308,8 @@ def mostrar_resumo_config(config):
         tempo = f"{conf.get('tempo_max', 0)/60:.1f} min" if conf.get("ativo", False) else "-"
         table.add_row(f"{nome_display}", f"{status} ({tempo})")
     
-    tempo_total = config["otimizacao"]["tempo_total_max"]
+    tempo_total = config["otimizacao"].get("tempo_total_max", 
+                                           sum(f.get("tempo_max", 0) for f in fases.values() if f.get("ativo", False)))
     table.add_row("Tempo total estimado", f"{tempo_total/60:.1f} minutos")
     
     console.print(table)
