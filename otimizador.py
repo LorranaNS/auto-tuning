@@ -95,6 +95,7 @@ class HybridOptimizer:
         
         print("FASE 1: Explorando bordas...")
         max_time = config.get('tempo_max', 300)
+        phase_start = time.time()
         
         # Obtém configurações de teste do config
         edge_configs = config.get('configuracoes_teste', [
@@ -105,24 +106,38 @@ class HybridOptimizer:
             [50, 50, 50, 50, 50]
         ])
         
-        # Testa cada configuração de borda
+        num_params = len(self.config_manager.config['parametros'])
+        
+        # Ajusta todas as configurações antecipadamente
+        adjusted_configs = []
         for edge_config in edge_configs:
-            if time.time() - self.start_time > max_time:
-                return
+            config_copy = list(edge_config)
+            if len(config_copy) < num_params:
+                config_copy = config_copy + [50] * (num_params - len(config_copy))
+            elif len(config_copy) > num_params:
+                config_copy = config_copy[:num_params]
+            adjusted_configs.append(config_copy)
+        
+        # Executa configurações repetidamente até o tempo máximo
+        iteration = 0
+        while time.time() - phase_start < max_time:
+            for edge_config in adjusted_configs:
+                if time.time() - phase_start >= max_time:
+                    break
+                
+                # Avalia esta configuração
+                self.evaluate(*edge_config)
+                iteration += 1
             
-            # Garante que temos o número correto de parâmetros
-            num_params = len(self.config_manager.config['parametros'])
-            
-            # Ajusta a configuração se necessário
-            if len(edge_config) < num_params:
-                # Completa com valores médios
-                edge_config = list(edge_config) + [50] * (num_params - len(edge_config))
-            elif len(edge_config) > num_params:
-                # Trunca
-                edge_config = edge_config[:num_params]
-            
-            # Avalia esta configuração
-            self.evaluate(*edge_config)
+            # Log de progresso a cada 10 iterações
+            if iteration % 10 == 0:
+                elapsed = time.time() - phase_start
+                print(f"Explorando bordas - Iteração {iteration} | "
+                      f"Tempo: {elapsed:.0f}s/{max_time}s | "
+                      f"Melhor: {self.best_value:.2f}")
+        
+        elapsed = time.time() - phase_start
+        print(f"Fase 1 concluída - {iteration} avaliações em {elapsed:.1f}s")
     
     def pso_optimize(self):
         """Fase 2: PSO"""
