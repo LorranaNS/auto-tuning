@@ -1,0 +1,52 @@
+
+═══════════════════════════════════════════════════════════════
+                    RELATÓRIO DE OTIMIZAÇÃO
+═══════════════════════════════════════════════════════════════
+
+PASTA DE RESULTADOS: resultados\tentativa_02-12-2025_1935
+
+OBJETIVO: MAXIMIZAR
+
+CONFIGURAÇÃO:
+-------------
+Arquivo de configuração: temp_config.json
+Número de parâmetros: 10
+Parâmetros categóricos: 0
+Parâmetros numéricos: 10
+
+ESTRATÉGIA UTILIZADA:
+--------------------
+Abordagem Híbrida configurável com três fases:
+
+1. EXPLORAÇÃO DE BORDAS: 20.0 min
+2. PSO GLOBAL: 20.0 min
+3. PSO FOCADO EM BORDAS: 20.0 min
+
+RESULTADOS:
+-----------
+Tempo de execução: 60.33 minutos (3619.9 segundos)
+Número de tentativas: 8546
+Taxa de avaliação: 2.36 tentativas/segundo
+
+MELHOR RESULTADO ENCONTRADO:
+-----------------------------
+Valor: 1500.000000
+
+Parâmetros:
+  x1   (1-1000)    : 800
+  x2   (1-1000)    : 800
+  x3   (1-1000)    : 800
+  x4   (1-1000)    : 800
+  x5   (1-1000)    : 800
+  x6   (1-1000)    : 800
+  x7   (1-1000)    : 800
+  x8   (1-1000)    : 800
+  x9   (1-1000)    : 800
+  x10  (1-1000)    : 800
+
+Comando para reproduzir:
+./provab2.exe 800 800 800 800 800 800 800 800 800 800
+
+═══════════════════════════════════════════════════════════════
+Data/Hora: 02/12/2025 20:35:26
+═══════════════════════════════════════════════════════════════

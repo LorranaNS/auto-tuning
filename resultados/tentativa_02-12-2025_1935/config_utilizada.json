@@ -1,0 +1,192 @@
+{
+  "objetivo": "maximizar",
+  "modelo": {
+    "executavel": "./provab2.exe",
+    "timeout": 10
+  },
+  "parametros": [
+    {
+      "nome": "x1",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 1"
+    },
+    {
+      "nome": "x2",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 2"
+    },
+    {
+      "nome": "x3",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 3"
+    },
+    {
+      "nome": "x4",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 4"
+    },
+    {
+      "nome": "x5",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 5"
+    },
+    {
+      "nome": "x6",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 6"
+    },
+    {
+      "nome": "x7",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 7"
+    },
+    {
+      "nome": "x8",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 8"
+    },
+    {
+      "nome": "x9",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 9"
+    },
+    {
+      "nome": "x10",
+      "tipo": "numerico",
+      "min": 1,
+      "max": 1000,
+      "descricao": "Parâmetro numérico 10"
+    }
+  ],
+  "otimizacao": {
+    "fases": {
+      "exploracao_bordas": {
+        "ativo": true,
+        "tempo_max": 1200,
+        "configuracoes_teste": [
+          [
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1000,
+            1,
+            1000,
+            1,
+            1000,
+            1,
+            1000,
+            1,
+            1000,
+            1
+          ],
+          [
+            1,
+            1000,
+            1,
+            1000,
+            1,
+            1000,
+            1,
+            1000,
+            1,
+            1000
+          ],
+          [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          [
+            750,
+            750,
+            750,
+            750,
+            750,
+            750,
+            750,
+            750,
+            750,
+            750
+          ],
+          [
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250
+          ]
+        ]
+      },
+      "pso": {
+        "ativo": true,
+        "tempo_max": 1200,
+        "num_particulas": 30,
+        "inercia": 0.7,
+        "c1": 1.5,
+        "c2": 1.5,
+        "probabilidade_mutacao": 0.15
+      },
+      "pso_bordas": {
+        "ativo": true,
+        "tempo_max": 1200,
+        "num_particulas": 15,
+        "inercia": 0.4,
+        "c1": 2.0,
+        "c2": 1.0,
+        "probabilidade_mutacao": 0.2
+      }
+    },
+    "tempo_total_max": 3600
+  }
+}
