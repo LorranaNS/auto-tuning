@@ -1,0 +1,47 @@
+
+═══════════════════════════════════════════════════════════════
+                    RELATÓRIO DE OTIMIZAÇÃO
+═══════════════════════════════════════════════════════════════
+
+PASTA DE RESULTADOS: resultados\tentativa_02-12-2025_1549
+
+OBJETIVO: MAXIMIZAR
+
+CONFIGURAÇÃO:
+-------------
+Arquivo de configuração: temp_config.json
+Número de parâmetros: 5
+Parâmetros categóricos: 0
+Parâmetros numéricos: 5
+
+ESTRATÉGIA UTILIZADA:
+--------------------
+Abordagem Híbrida configurável com três fases:
+
+1. EXPLORAÇÃO DE BORDAS: 2.0 min
+2. PSO GLOBAL: 2.0 min
+3. PSO FOCADO EM BORDAS: 2.0 min
+
+RESULTADOS:
+-----------
+Tempo de execução: 6.58 minutos (394.9 segundos)
+Número de tentativas: 479
+Taxa de avaliação: 1.21 tentativas/segundo
+
+MELHOR RESULTADO ENCONTRADO:
+-----------------------------
+Valor: 140.000000
+
+Parâmetros:
+  x1   (1-100)     : 80
+  x2   (1-100)     : 79
+  x3   (1-100)     : 84
+  x4   (1-100)     : 77
+  x5   (1-100)     : 78
+
+Comando para reproduzir:
+./simulado.exe 80 79 84 77 78
+
+═══════════════════════════════════════════════════════════════
+Data/Hora: 02/12/2025 15:56:00
+═══════════════════════════════════════════════════════════════

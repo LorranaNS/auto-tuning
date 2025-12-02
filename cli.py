@@ -34,7 +34,7 @@ def print_banner():
     banner = """
     ╔═══════════════════════════════════════════════════════════╗
     ║                                                           ║
-    ║   🚀  OTIMIZAÇÃO HÍBRIDA - PESQUISA OPERACIONAL  🚀      ║
+    ║       OTIMIZAÇÃO HÍBRIDA - PESQUISA OPERACIONAL           ║
     ║                                                           ║
     ║           Sistema de Otimização com PSO Híbrido           ║
     ║                                                           ║
@@ -164,11 +164,11 @@ def configurar_fases():
     if fase1_ativa is None:
         return None
     
-    tempo1 = 300
+    tempo1 = 1200
     if fase1_ativa:
         tempo1_input = questionary.text(
             "Tempo máximo em segundos:",
-            default="300",
+            default="1200",
             validate=lambda x: x.isdigit() and int(x) > 0,
             style=custom_style
         ).ask()
@@ -194,12 +194,12 @@ def configurar_fases():
     if fase2_ativa is None:
         return None
     
-    tempo2 = 2700
+    tempo2 = 1200
     num_particulas = 30
     if fase2_ativa:
         tempo2_input = questionary.text(
             "Tempo máximo em segundos:",
-            default="2700",
+            default="1200",
             validate=lambda x: x.isdigit() and int(x) > 0,
             style=custom_style
         ).ask()
@@ -240,11 +240,11 @@ def configurar_fases():
     if fase3_ativa is None:
         return None
     
-    tempo3 = 600
+    tempo3 = 1200
     if fase3_ativa:
         tempo3_input = questionary.text(
             "Tempo máximo em segundos:",
-            default="600",
+            default="1200",
             validate=lambda x: x.isdigit() and int(x) > 0,
             style=custom_style
         ).ask()

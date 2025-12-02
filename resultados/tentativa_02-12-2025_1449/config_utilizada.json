@@ -45,20 +45,33 @@
     "fases": {
       "exploracao_bordas": {
         "ativo": true,
-        "tempo_max": 1200,
+        "tempo_max": 120,
         "configuracoes_teste": [
-          [100, 100, 100, 100, 100],
-          [1, 1, 1, 1, 1],
-          [100, 1, 100, 1, 100],
-          [1, 100, 1, 100, 1],
-          [50, 50, 50, 50, 50],
-          [75, 75, 75, 75, 75],
-          [25, 25, 25, 25, 25]
+          [
+            100,
+            100
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            100,
+            1
+          ],
+          [
+            1,
+            100
+          ],
+          [
+            50,
+            50
+          ]
         ]
       },
       "pso": {
         "ativo": true,
-        "tempo_max": 1200,
+        "tempo_max": 120,
         "num_particulas": 30,
         "inercia": 0.7,
         "c1": 1.5,
@@ -67,7 +80,7 @@
       },
       "pso_bordas": {
         "ativo": true,
-        "tempo_max": 1200,
+        "tempo_max": 120,
         "num_particulas": 15,
         "inercia": 0.4,
         "c1": 2.0,
@@ -75,6 +88,6 @@
         "probabilidade_mutacao": 0.2
       }
     },
-    "tempo_total_max": 3600
+    "tempo_total_max": 360
   }
 }

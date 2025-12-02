@@ -45,7 +45,7 @@
     "fases": {
       "exploracao_bordas": {
         "ativo": true,
-        "tempo_max": 600,
+        "tempo_max": 1200,
         "configuracoes_teste": [
           [
             100,
@@ -100,7 +100,7 @@
       },
       "pso": {
         "ativo": true,
-        "tempo_max": 600,
+        "tempo_max": 1200,
         "num_particulas": 30,
         "inercia": 0.7,
         "c1": 1.5,
@@ -109,7 +109,7 @@
       },
       "pso_bordas": {
         "ativo": true,
-        "tempo_max": 600,
+        "tempo_max": 1200,
         "num_particulas": 15,
         "inercia": 0.4,
         "c1": 2.0,
@@ -117,6 +117,6 @@
         "probabilidade_mutacao": 0.2
       }
     },
-    "tempo_total_max": 1800
+    "tempo_total_max": 3600
   }
 }

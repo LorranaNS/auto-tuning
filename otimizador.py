@@ -6,6 +6,13 @@ from datetime import datetime
 import numpy as np
 from config_manager import ConfigManager
 import os
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
+from rich.table import Table
+from rich import box
+
+console = Console()
 
 class HybridOptimizer:
     def __init__(self, config_path="config.json"):
@@ -42,7 +49,7 @@ class HybridOptimizer:
         resultado_dir = os.path.join(base_dir, timestamp)
         os.makedirs(resultado_dir, exist_ok=True)
         
-        print(f"📁 Resultados serão salvos em: {resultado_dir}\n")
+        console.print(f"[dim]📁 Resultados serão salvos em:[/dim] [cyan]{resultado_dir}[/cyan]\n")
         return resultado_dir
         
     def evaluate(self, *params):
@@ -71,8 +78,14 @@ class HybridOptimizer:
             if is_better:
                 self.best_value = value
                 self.best_params = tuple(validated_params)
-                objetivo_str = "MAXIMIZAR" if self.is_maximizing else "MINIMIZAR"
-                print(f"NOVO MELHOR ({objetivo_str}): {value:.2f} | {self.best_params}")
+                objetivo_str = "MAX" if self.is_maximizing else "MIN"
+                params_str = ", ".join(str(p) for p in validated_params)
+                console.print(
+                    f"[bold black on green] ★ NOVO MELHOR [/bold black on green] "
+                    f"[bold green]{value:.4f}[/bold green] "
+                    f"[dim]({objetivo_str})[/dim] "
+                    f"[yellow]→[/yellow] [dim]({params_str})[/dim]"
+                )
             
             self.history.append({
                 'attempt': self.attempts,
@@ -83,18 +96,21 @@ class HybridOptimizer:
             
             return value
         except Exception as e:
-            print(f"Erro na execução: {e}")
+            console.print(f"[red]✗ Erro na execução:[/red] [dim]{e}[/dim]")
             return float('inf') if not self.is_maximizing else float('-inf')
     
     def explore_edges(self):
         """Fase 1: Exploração de bordas"""
         config = self.config_manager.get_fase_config('exploracao_bordas')
         if not config.get('ativo', True):
-            print("FASE 1: Exploração de bordas desativada")
+            console.print("[dim]FASE 1: Exploração de bordas[/dim] [yellow]desativada[/yellow]")
             return
-        
-        print("FASE 1: Explorando bordas...")
+
         max_time = config.get('tempo_max', 300)
+        console.print(Panel.fit(
+            f"[bold]FASE 1: Exploração de Bordas[/bold]\n[dim]Tempo máximo: {max_time/60:.1f} min[/dim]",
+            border_style="blue"
+        ))
         phase_start = time.time()
         
         # Obtém configurações de teste do config
@@ -132,24 +148,39 @@ class HybridOptimizer:
             # Log de progresso a cada 10 iterações
             if iteration % 10 == 0:
                 elapsed = time.time() - phase_start
-                print(f"Explorando bordas - Iteração {iteration} | "
-                      f"Tempo: {elapsed:.0f}s/{max_time}s | "
-                      f"Melhor: {self.best_value:.2f}")
-        
+                pct = min(100, (elapsed / max_time) * 100)
+                console.print(
+                    f"  [dim]Iteração[/dim] [cyan]{iteration:4d}[/cyan] "
+                    f"[dim]│[/dim] [blue]{elapsed:5.0f}s/{max_time}s[/blue] "
+                    f"[dim]│[/dim] [magenta]{pct:5.1f}%[/magenta] "
+                    f"[dim]│ Melhor:[/dim] [green]{self.best_value:.2f}[/green]"
+                )
+
         elapsed = time.time() - phase_start
-        print(f"Fase 1 concluída - {iteration} avaliações em {elapsed:.1f}s")
+        console.print(f"[green]✓ Fase 1 concluída[/green] [dim]- {iteration} avaliações em {elapsed:.1f}s[/dim]\n")
     
     def pso_optimize(self):
         """Fase 2: PSO"""
         config = self.config_manager.get_fase_config('pso')
         if not config.get('ativo', True):
-            print("\nFASE 2: PSO desativada")
+            console.print("[dim]FASE 2: PSO[/dim] [yellow]desativada[/yellow]")
             return
-        
-        print("\nFASE 2: PSO...")
-        
+
+        # Inicializa best_params se ainda não existir
+        if self.best_params is None:
+            initial_params = []
+            for param in self.config_manager.config['parametros']:
+                initial_params.append(self.config_manager.get_random_value(param['nome']))
+            self.best_params = tuple(initial_params)
+            self.best_value = self.evaluate(*initial_params)
+
         max_time = config.get('tempo_max', 1200)
         n_particles = config.get('num_particulas', 20)
+        console.print(Panel.fit(
+            f"[bold]FASE 2: PSO Global[/bold]\n[dim]Tempo: {max_time/60:.1f} min | Partículas: {n_particles}[/dim]",
+            border_style="magenta"
+        ))
+
         w = config.get('inercia', 0.7)
         c1 = config.get('c1', 1.5)
         c2 = config.get('c2', 1.5)
@@ -217,20 +248,40 @@ class HybridOptimizer:
             
             if iteration % 5 == 0:
                 elapsed = time.time() - phase_start
-                print(f"Iteração {iteration} | Tentativas: {self.attempts} | "
-                      f"Tempo: {elapsed:.0f}s | Melhor: {self.best_value:.2f}")
+                pct = min(100, (elapsed / max_time) * 100)
+                console.print(
+                    f"  [dim]Iteração[/dim] [cyan]{iteration:4d}[/cyan] "
+                    f"[dim]│[/dim] [blue]{elapsed:5.0f}s/{max_time}s[/blue] "
+                    f"[dim]│[/dim] [magenta]{pct:5.1f}%[/magenta] "
+                    f"[dim]│ Tentativas:[/dim] [yellow]{self.attempts}[/yellow] "
+                    f"[dim]│ Melhor:[/dim] [green]{self.best_value:.2f}[/green]"
+                )
+
+        elapsed = time.time() - phase_start
+        console.print(f"[green]✓ Fase 2 concluída[/green] [dim]- {iteration} iterações em {elapsed:.1f}s[/dim]\n")
     
     def pso_bordas(self):
         """Fase 3: PSO Focado em Bordas - Híbrido"""
         config = self.config_manager.get_fase_config('pso_bordas')
         if not config.get('ativo', True):
-            print("\nFASE 3: PSO Focado em Bordas desativada")
+            console.print("[dim]FASE 3: PSO Focado em Bordas[/dim] [yellow]desativada[/yellow]")
             return
-        
-        print("\nFASE 3: PSO Focado em Bordas (Híbrido)...")
-        
+
+        # Inicializa best_params se ainda não existir
+        if self.best_params is None:
+            initial_params = []
+            for param in self.config_manager.config['parametros']:
+                initial_params.append(self.config_manager.get_random_value(param['nome']))
+            self.best_params = tuple(initial_params)
+            self.best_value = self.evaluate(*initial_params)
+
         max_time = config.get('tempo_max', 600)
         n_particles = config.get('num_particulas', 15)
+        console.print(Panel.fit(
+            f"[bold]FASE 3: PSO Híbrido (Bordas)[/bold]\n[dim]Tempo: {max_time/60:.1f} min | Partículas: {n_particles}[/dim]",
+            border_style="yellow"
+        ))
+
         w = config.get('inercia', 0.4)  # Menor inércia para busca mais local
         c1 = config.get('c1', 2.0)  # Maior componente cognitivo
         c2 = config.get('c2', 1.0)  # Menor componente social
@@ -319,29 +370,76 @@ class HybridOptimizer:
                         particles[i][j] = self.config_manager.get_random_value(param['nome'])
                 
                 value = self.evaluate(*particles[i])
-                
-                if value > personal_best_values[i]:
+
+                # Verifica se é melhor baseado no objetivo
+                is_better = (value > personal_best_values[i]) if self.is_maximizing else (value < personal_best_values[i])
+                if is_better:
                     personal_best[i] = particles[i][:]
                     personal_best_values[i] = value
             
             if iteration % 3 == 0:
                 elapsed = time.time() - phase_start
-                print(f"Iteração {iteration} | Tentativas fase: {self.attempts - sum(1 for h in self.history if h['time'] < self.history[-1]['time'] - elapsed)} | "
-                      f"Tempo fase: {elapsed:.0f}s | Melhor global: {self.best_value:.2f}")
+                pct = min(100, (elapsed / max_time) * 100)
+                console.print(
+                    f"  [dim]Iteração[/dim] [cyan]{iteration:4d}[/cyan] "
+                    f"[dim]│[/dim] [blue]{elapsed:5.0f}s/{max_time}s[/blue] "
+                    f"[dim]│[/dim] [magenta]{pct:5.1f}%[/magenta] "
+                    f"[dim]│ Tentativas:[/dim] [yellow]{self.attempts}[/yellow] "
+                    f"[dim]│ Melhor:[/dim] [green]{self.best_value:.2f}[/green]"
+                )
+
+        elapsed = time.time() - phase_start
+        console.print(f"[green]✓ Fase 3 concluída[/green] [dim]- {iteration} iterações em {elapsed:.1f}s[/dim]\n")
     
     def generate_report(self):
         elapsed_time = time.time() - self.start_time
-        
-        # Gera informações sobre parâmetros
+        objetivo_str = "MAXIMIZAR" if self.is_maximizing else "MINIMIZAR"
+
+        # Painel principal do resultado
+        console.print()
+        console.print(Panel.fit(
+            f"[bold green]★ MELHOR RESULTADO: {self.best_value:.6f}[/bold green]",
+            title="[bold]OTIMIZAÇÃO CONCLUÍDA[/bold]",
+            border_style="green"
+        ))
+
+        # Tabela de parâmetros
+        params_table = Table(title="Parâmetros Otimizados", box=box.ROUNDED, border_style="cyan")
+        params_table.add_column("Parâmetro", style="cyan")
+        params_table.add_column("Tipo", style="dim")
+        params_table.add_column("Valor", style="green bold")
+
+        for param, value in zip(self.config_manager.config['parametros'], self.best_params):
+            tipo_desc = f"{param['min']}-{param['max']}" if param['tipo'] == 'numerico' else param['tipo']
+            params_table.add_row(param['nome'], tipo_desc, str(value))
+
+        console.print(params_table)
+
+        # Tabela de estatísticas
+        stats_table = Table(title="Estatísticas", box=box.ROUNDED, border_style="magenta")
+        stats_table.add_column("Métrica", style="magenta")
+        stats_table.add_column("Valor", style="white")
+
+        stats_table.add_row("Objetivo", objetivo_str)
+        stats_table.add_row("Tempo de execução", f"{elapsed_time/60:.2f} min ({elapsed_time:.1f}s)")
+        stats_table.add_row("Tentativas", str(self.attempts))
+        stats_table.add_row("Taxa de avaliação", f"{self.attempts/elapsed_time:.2f}/s")
+        stats_table.add_row("Pasta de resultados", self.resultado_dir)
+
+        console.print(stats_table)
+
+        # Comando para reproduzir
+        cmd = f"{self.exe_path} {' '.join(str(p) for p in self.best_params)}"
+        console.print(Panel(f"[bold]{cmd}[/bold]", title="Comando para reproduzir", border_style="yellow"))
+
+        # Gera relatório em texto para salvar
         params_info = ""
-        for i, (param, value) in enumerate(zip(self.config_manager.config['parametros'], self.best_params)):
+        for param, value in zip(self.config_manager.config['parametros'], self.best_params):
             tipo_desc = f"({param['tipo']})"
             if param['tipo'] == 'numerico':
                 tipo_desc = f"({param['min']}-{param['max']})"
             params_info += f"  {param['nome']:4} {tipo_desc:12}: {value}\n"
-        
-        objetivo_str = "MAXIMIZAR" if self.is_maximizing else "MINIMIZAR"
-        
+
         report = f"""
 ═══════════════════════════════════════════════════════════════
                     RELATÓRIO DE OTIMIZAÇÃO
@@ -386,8 +484,6 @@ Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 ═══════════════════════════════════════════════════════════════
 """
         
-        print(report)
-        
         # Salva arquivos na pasta de resultados
         relatorio_path = os.path.join(self.resultado_dir, 'relatorio_otimizacao.txt')
         historico_path = os.path.join(self.resultado_dir, 'historico_otimizacao.json')
@@ -411,10 +507,10 @@ Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
             f.write(f"TEMPO: {elapsed_time/60:.2f} min\n")
             f.write(f"COMANDO: {self.exe_path} {' '.join(str(p) for p in self.best_params)}\n")
         
-        print(f"\n📄 Arquivos salvos em: {self.resultado_dir}/")
-        print(f"  ✓ relatorio_otimizacao.txt")
-        print(f"  ✓ historico_otimizacao.json")
-        print(f"  ✓ config_utilizada.json")
-        print(f"  ✓ resumo.txt")
-        
+        console.print(f"\n[dim]📄 Arquivos salvos em:[/dim] [cyan]{self.resultado_dir}/[/cyan]")
+        console.print(f"  [green]✓[/green] [dim]relatorio_otimizacao.txt[/dim]")
+        console.print(f"  [green]✓[/green] [dim]historico_otimizacao.json[/dim]")
+        console.print(f"  [green]✓[/green] [dim]config_utilizada.json[/dim]")
+        console.print(f"  [green]✓[/green] [dim]resumo.txt[/dim]")
+
         return report
